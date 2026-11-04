@@ -33,8 +33,21 @@ which runs, in order (each also runnable alone inside an allocation):
     setup.sh           registry (from trend.sst) and the 8640x4320 mapping
     oracle.sh          one composite: exact totals check + map; LOOK at it
 
-Only after the oracle passes: backfill and publish to
-`pawsey1197:aad-derived/trend-chl/`.
+Only after the oracle passes:
+
+    sbatch backfill-chl.sh   # 24 CPUs, 96 GB: backfill all composites, publish
+
+publishes to `pawsey1197:aad-derived/trend-chl/` (public read:
+`https://projects.pawsey.org.au/aad-derived/trend-chl/manifest.json`).
+
+## Onboarding record
+
+- Catalog (2026-11-05): 2127 composites, 1997-09-03 .. 2026-09-18; steps
+  of 5 days throughout (continuous across year ends) except one of 7 and
+  one of 10 (1997-10-13 absent).
+- Oracle 2010-05-01: global totals of the cell sums equal numpy on the
+  same file exactly (n = 12183690, sumw = 10485678.385498,
+  sumwx = -8950079.897111); global geometric mean 10^-0.854 = 0.14 mg m-3.
 
 ## Notes
 
