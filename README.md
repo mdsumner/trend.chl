@@ -40,6 +40,15 @@ Only after the oracle passes:
 publishes to `pawsey1197:aad-derived/trend-chl/` (public read:
 `https://projects.pawsey.org.au/aad-derived/trend-chl/manifest.json`).
 
+## Site
+
+    sbatch data-raw/export_site.sh   # after the backfill: docs/data/* + Modes
+    git add docs/data && git commit -m "site data" && git push
+
+Needs trend.sst checked out beside this repo: the export keeps only ocean
+cells, taken from trend.sst's committed `docs/data/cells-oisst.json`
+(minus Caspian, Great Lakes, Ladoga/Onega). Pages serves `main:/docs`.
+
 ## Onboarding record
 
 - Catalog (2026-11-05): 2127 composites, 1997-09-03 .. 2026-09-18; steps
