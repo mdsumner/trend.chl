@@ -23,11 +23,15 @@ The product also carries per-pixel `chlor_a_log10_bias` and
 inverse-variance weights (a second set of sums), the bias a scientific
 choice to make deliberately.
 
-## Steps (Setonix, from the repo root)
+## Steps (Setonix, from the repo root, through the queue)
 
-    bash build_catalog.sh    # chlfiles.parquet: (date, dsn), one row per composite
-    bash setup.sh            # registry (from trend.sst) and the 8640x4320 mapping
-    bash oracle.sh           # one composite: exact totals check + map; LOOK at it
+    sbatch onboard-chl.sh    # 24 CPUs, 96 GB: catalog, mapping, oracle
+
+which runs, in order (each also runnable alone inside an allocation):
+
+    build_catalog.sh   chlfiles.parquet: (date, dsn), one row per composite
+    setup.sh           registry (from trend.sst) and the 8640x4320 mapping
+    oracle.sh          one composite: exact totals check + map; LOOK at it
 
 Only after the oracle passes: backfill and publish to
 `pawsey1197:aad-derived/trend-chl/`.

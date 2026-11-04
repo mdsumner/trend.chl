@@ -8,7 +8,7 @@
 ##     Atlantic spring bloom and coastal upwelling high, the subtropical
 ##     gyres low (about -1.5 to -1.0 in log10 mg m-3), no flips.
 set -eu
-cd "$(dirname "$0")"; source ./config.sh
+cd "${SLURM_SUBMIT_DIR:-$(dirname "$0")}"; source ./config.sh
 $RUN Rscript - <<'R'
 library(arrow); library(grist)
 reg <- read_parquet("s2_registry.parquet")

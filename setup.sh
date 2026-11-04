@@ -3,7 +3,7 @@
 ## for the 8640 x 4320 grid, 512-row bands to match the COG blocks.
 ##   bash setup.sh      (interactive node is fine; ~10-20 min for the mapping)
 set -eu
-cd "$(dirname "$0")"; source ./config.sh
+cd "${SLURM_SUBMIT_DIR:-$(dirname "$0")}"; source ./config.sh
 [ -f s2_registry.parquet ] || cp ../trend.sst/s2_registry.parquet .
 $RUN Rscript - <<'R'
 library(arrow); library(grist)

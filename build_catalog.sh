@@ -2,7 +2,7 @@
 ## catalog: one row per 5-day composite, (date, dsn), dated by its first
 ## day, read anonymously from the Acacia copy. Writes chlfiles.parquet.
 set -eu
-cd "$(dirname "$0")"; source ./config.sh
+cd "${SLURM_SUBMIT_DIR:-$(dirname "$0")}"; source ./config.sh
 module load rclone/1.68.1 2>/dev/null || true
 rclone lsf -R --files-only "$REMOTE/" > chl_listing.txt
 $RUN Rscript - <<'R'
