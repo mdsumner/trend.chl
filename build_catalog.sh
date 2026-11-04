@@ -3,7 +3,8 @@
 ## day, read anonymously from the Acacia copy. Writes chlfiles.parquet.
 set -eu
 cd "${SLURM_SUBMIT_DIR:-$(dirname "$0")}"; source ./config.sh
-module load rclone/1.68.1 2>/dev/null || true
+module load rclone/1.68.1
+command -v rclone >/dev/null || { echo "rclone not found after module load" >&2; exit 1; }
 rclone lsf -R --files-only "$REMOTE/" > chl_listing.txt
 $RUN Rscript - <<'R'
 x <- readLines("chl_listing.txt")
