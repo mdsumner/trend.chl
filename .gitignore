@@ -1,0 +1,12 @@
+sums/
+mapping/
+oracle-sums/
+s2_registry.parquet
+chlfiles.parquet
+chl_listing.txt
+oracle-date.txt
+manifest.json
+*.out
+*.log
+*.png
+!docs/**
