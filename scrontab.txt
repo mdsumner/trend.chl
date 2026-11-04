@@ -1,0 +1,14 @@
+## weekly check of trend.chl on Setonix. Install with:  scrontab scrontab.txt
+## FIRST save what is installed:  scrontab -l > ~/scrontab-backup-$(date +%F).txt
+## (replaces your WHOLE scrontab -- trend.sst and trend.sla have their own
+## entries, so merge all three with  scrontab -e  instead). Times are
+## Setonix local (AWST). Sundays 04:29: v6.0 is a fixed release, so most
+## runs find nothing new; a new version re-sums everything (~1 h at 8 CPUs).
+#SCRON --job-name=chl-weekly
+#SCRON --account=pawsey1362
+#SCRON --partition=work
+#SCRON --nodes=1 --ntasks=1 --cpus-per-task=8 --mem=32G
+#SCRON --time=03:00:00
+#SCRON --chdir=/scratch/pawsey1362/mdsumner/trend.chl
+#SCRON --output=/scratch/pawsey1362/mdsumner/trend.chl/chl-weekly-%j.out
+29 4 * * 0 bash -l data-raw/weekly.sh
