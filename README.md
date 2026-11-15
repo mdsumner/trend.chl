@@ -1,5 +1,9 @@
 # trend.chl
 
+Part of the [trend family](https://australianantarcticdivision.github.io/trend/) of ocean climate records
+(sea surface temperature, sea level, chlorophyll-a, sea ice), all listed
+on that page.
+
 Chlorophyll-a reduced to mergeable sufficient statistics on S2 level-5
 cells, in log10 space: one Parquet file per 5-day composite of
 `(cell, n, sumw, sumwx, sumwx2)` where x = log10(chl-a, mg m-3), so cell
