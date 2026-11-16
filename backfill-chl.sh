@@ -28,11 +28,13 @@ backfill(src, reg, workers = as.integer(Sys.getenv("SLURM_CPUS_PER_TASK", "24"))
 R
 
 module load rclone/1.68.1
-rclone copy --checksum sums/ $BUCKET/sums/ || echo "WARNING: sums copy FAILED" >&2
-rclone copy --checksum mapping/ $BUCKET/mapping/ || echo "WARNING: mapping copy FAILED" >&2
+## --copy-links: the $MYSOFTWARE clone links its data files (manifest.json,
+## catalogs, registry) to scratch, and rclone skips symlinked files without it
+rclone copy --copy-links --checksum sums/ $BUCKET/sums/ || echo "WARNING: sums copy FAILED" >&2
+rclone copy --copy-links --checksum mapping/ $BUCKET/mapping/ || echo "WARNING: mapping copy FAILED" >&2
 for f in s2_registry.parquet chlfiles.parquet; do
-  rclone copyto --checksum $f $BUCKET/$f || echo "WARNING: $f copy FAILED" >&2
+  rclone copyto --copy-links --checksum $f $BUCKET/$f || echo "WARNING: $f copy FAILED" >&2
 done
 $RUN Rscript -e 'grist::write_manifest(".")' \
-  && rclone copyto manifest.json $BUCKET/manifest.json \
+  && rclone copyto --copy-links manifest.json $BUCKET/manifest.json \
   || echo "WARNING: manifest FAILED" >&2
