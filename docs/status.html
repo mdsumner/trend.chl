@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>trend.chl - store status</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<link rel="stylesheet" href="kit/trend.css">
+<script src="kit/records.js"></script>
+<script src="site.js"></script>
+</head>
+<body>
+<div class="viz-root app"><div class="wrap">
+<header class="trend"></header><script src="kit/shell.js"></script>
+<p class="sub">5-day chlorophyll-a composites, in log10, as sufficient statistics on S2 cells. Store status and
+sanity series; generated <span id="gen">-</span>.</p>
+
+<div id="content"><div class="err">Loading data/status.json ... if this message
+stays, run <code>Rscript data-raw/export_site.R</code> and commit docs/data/.</div></div>
+<div class="tooltip" id="tip"></div>
+<footer>ESA Ocean Colour CCI v6.0 merged L3S chlorophyll-a, 5-day composites at 4 km,
+aggregated to S2 level-5 cells in log10; ocean cells only; sums on object
+storage. Data: ESA Ocean Colour Climate Change Initiative, Version 6.0.</footer>
+</div></div>
+
+<script src="kit/status.js"></script>
+</body>
+</html>
