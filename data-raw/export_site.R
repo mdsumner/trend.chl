@@ -200,10 +200,16 @@ for (src in names(paths)) {
   percell <- arrow::open_dataset(p) |>
     filter(date >= d0, date <= d1) |>
     group_by(cell) |>
-    summarise(n = sum(n), sumw = sum(sumw), sumwx = sum(sumwx)) |>
+    summarise(nd = n(), n = sum(n), sumw = sum(sumw), sumwx = sum(sumwx)) |>
     collect() |>
     filter(cell %in% OCEAN) |>
-    mutate(mean = sumwx / sumw, w = sumw / n)   # w: mean per-pixel weight
+    ## w: the cell's weight in a union of cells, its mean sumw per composite
+    ## with data (the ocean area it sees, in pixel-weight units), so
+    ## sum(w * mean) / sum(w) over a selection follows the sums; only
+    ## approximately, as coverage varies with cloud, ice and season. Not
+    ## sumw / n: that is the mean weight of one pixel, cos(lat), which
+    ## ignores land in the cell and under-weights high latitudes.
+    mutate(mean = sumwx / sumw, w = sumw / nd)
 
   ann <- arrow::open_dataset(p) |>
     filter(date >= d0, date <= d1) |>
