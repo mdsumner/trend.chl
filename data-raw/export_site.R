@@ -7,6 +7,7 @@
 ##   docs/data/series.json   daily global + 60S-60N series per source
 ##   docs/data/cells.json    cell rings (slerp-densified) + per-cell metrics
 ##   docs/data/monthly.bin   Float32 cell x month mean matrix (cell-major)
+##   docs/data/weights-<src>.bin  Float32 cell x month weights (same layout)
 
 ## trend.chl version, ported from trend.sla's (itself from trend.sst's). Deliberately
 ## GDAL-FREE: loading grist pulls in GDAL's bundled libarrow, which
@@ -200,10 +201,17 @@ for (src in names(paths)) {
   percell <- arrow::open_dataset(p) |>
     filter(date >= d0, date <= d1) |>
     group_by(cell) |>
-    summarise(n = sum(n), sumw = sum(sumw), sumwx = sum(sumwx)) |>
+    summarise(nd = n(), n = sum(n), sumw = sum(sumw), sumwx = sum(sumwx)) |>
     collect() |>
     filter(cell %in% OCEAN) |>
-    mutate(mean = sumwx / sumw, w = sumw / n)   # w: mean per-pixel weight
+    ## w: the cell's weight in a union of cells, its mean sumw per composite
+    ## with data (the ocean area it sees, in pixel-weight units), so
+    ## sum(w * mean) / sum(w) over a selection follows the sums; only
+    ## approximately, as coverage varies with cloud, ice and season, so
+    ## the monthly weights below are exported for exact unions. Not
+    ## sumw / n: that is the mean weight of one pixel, cos(lat), which
+    ## ignores land in the cell and under-weights high latitudes.
+    mutate(mean = sumwx / sumw, w = sumw / nd)
 
   ann <- arrow::open_dataset(p) |>
     filter(date >= d0, date <= d1) |>
@@ -266,6 +274,23 @@ for (src in names(paths)) {
   close(con)
   message(sprintf("monthly-%s.bin: %i cells x %i months", src, nrow(mat), length(yms)))
 
+  ## monthly cell weights, same layout: the cell's sumw in the month over
+  ## the number of composites in the month (w's units, 0 = no data). A
+  ## selection's month is then sum(wm * m) / sum(wm) = the union of the
+  ## sums exactly, as coverage (cloud, ice, polar night) changes. Named in
+  ## the cell export as "weights"; the explorer uses it in place of w.
+  steps <- arrow::open_dataset(p) |> filter(date >= d0) |> distinct(date) |> collect()
+  k <- table(lubridate::year(steps$date) * 100L + lubridate::month(steps$date))
+  stopifnot(setequal(names(k), as.character(yms)))
+  wmat <- matrix(0, nrow(percell), length(yms))
+  wmat[cbind(match(mon$cell, percell$cell), match(mon$ym, yms))] <-
+    mon$sumw / as.numeric(k[as.character(mon$ym)])
+  wfile <- sprintf("weights-%s.bin", src)
+  con <- file(file.path(out, wfile), "wb")
+  writeBin(as.numeric(t(wmat)), con, size = 4, endian = "little")
+  close(con)
+  message(sprintf("%s: %i cells x %i months", wfile, nrow(wmat), length(yms)))
+
   region_sets <- Map(function(lab, cc) {
     ix <- if (is.null(cc)) seq_len(nrow(percell)) - 1L
           else which(percell$cell %in% cc) - 1L
@@ -276,7 +301,7 @@ for (src in names(paths)) {
     list(source = src, years = range(YEARS),
          months = sprintf("%04i-%02i", yms %/% 100L, yms %% 100L),
          baseline = paste(cfg$baseline, collapse = "-"),
-         regions = region_sets, cells = cells_out),
+         weights = wfile, regions = region_sets, cells = cells_out),
     file.path(out, sprintf("cells-%s.json", src)),
     auto_unbox = TRUE, digits = NA, na = "null")
   message(sprintf("cells-%s.json written", src))

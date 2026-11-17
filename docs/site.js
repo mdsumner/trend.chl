@@ -1,0 +1,18 @@
+// trend.chl site config, read by the shared kit (kit/, synced from
+// AustralianAntarcticDivision/trend with tools/kit-sync). Units, metric
+// scales and code-generator text for each record are in kit/records.js.
+window.TREND_SITE = {
+  record: "chl",
+  title: "trend.chl",
+  repo: "https://github.com/mdsumner/trend.chl",
+  tabs: [["index.html", "Explorer"], ["status.html", "Status"],
+         ["method.html", "Method"], ["modes.html", "Modes"],
+         ["mechanics.html", "Mechanics"]],
+  extraFiles: ["weights-occci-log10chl.bin"],   // monthly cell weights
+  explorer: {
+    sources: ["occci-log10chl"],
+    family: [],
+    view: "world",           // Equal Earth; every view is in the menu
+    rotate: [155, 10]
+  }
+};
