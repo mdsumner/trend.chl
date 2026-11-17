@@ -8,6 +8,7 @@ window.TREND_SITE = {
   tabs: [["index.html", "Explorer"], ["status.html", "Status"],
          ["method.html", "Method"], ["modes.html", "Modes"],
          ["mechanics.html", "Mechanics"]],
+  extraFiles: ["weights-occci-log10chl.bin"],   // monthly cell weights
   explorer: {
     sources: ["occci-log10chl"],
     family: [],
